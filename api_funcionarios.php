@@ -2,7 +2,6 @@
 require_once 'funcionarios_crud.php';
 require_once 'auth.php';
 
-// Iniciar sessão e verificar autenticação
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
@@ -12,10 +11,8 @@ $auth->checkAccess();
 
 header('Content-Type: application/json');
 
-// Criar conexão
 $conn = new mysqli("localhost", "root", "", "sistema_cadastroTim");
 
-// Verificar se há erro de conexão
 if ($conn->connect_error) {
     echo json_encode(['success' => false, 'message' => 'Erro de conexão com o banco: ' . $conn->connect_error]);
     exit;
@@ -27,7 +24,6 @@ $action = $_GET['action'] ?? '';
 try {
     switch ($action) {
         case 'create':
-            // Criar funcionário
             $json = file_get_contents('php://input');
             $data = json_decode($json, true);
             
@@ -35,8 +31,6 @@ try {
                 echo json_encode(['success' => false, 'message' => 'Dados JSON inválidos']);
                 break;
             }
-            
-            // Validar campos obrigatórios
             $camposObrigatorios = ['nome', 'cpf', 'email', 'telefone', 'cargo', 'departamento', 'salario', 'dataAdmissao'];
             foreach ($camposObrigatorios as $campo) {
                 if (!isset($data[$campo]) || empty($data[$campo])) {
@@ -53,9 +47,7 @@ try {
             break;
             
         case 'read':
-            // Ler funcionários
             if (isset($_GET['id'])) {
-                // Ler um funcionário específico
                 $funcionario = $funcionarioCRUD->buscarPorId($_GET['id']);
                 if ($funcionario) {
                     echo json_encode(['success' => true, 'funcionario' => $funcionario]);
@@ -63,14 +55,12 @@ try {
                     echo json_encode(['success' => false, 'message' => 'Funcionário não encontrado']);
                 }
             } else {
-                // Ler todos os funcionários
                 $funcionarios = $funcionarioCRUD->listar();
                 echo json_encode(['success' => true, 'funcionarios' => $funcionarios]);
             }
             break;
             
         case 'update':
-            // Atualizar funcionário
             if (!isset($_GET['id'])) {
                 echo json_encode(['success' => false, 'message' => 'ID não fornecido']);
                 break;
@@ -92,7 +82,6 @@ try {
             break;
             
         case 'delete':
-            // Excluir funcionário
             if (!isset($_GET['id'])) {
                 echo json_encode(['success' => false, 'message' => 'ID não fornecido']);
                 break;
@@ -115,4 +104,5 @@ try {
 }
 
 $conn->close();
+
 ?>
