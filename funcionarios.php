@@ -1,11 +1,10 @@
 <?php
 require_once 'auth.php';
-require_once 'conexao.php'; // Incluindo o arquivo de conexão com o banco
+require_once 'conexao.php'; 
 
 $auth = new Auth();
 $auth->checkAccess();
 
-// Criar tabela de funcionários se não existir
 $sql = "CREATE TABLE IF NOT EXISTS funcionarios (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,
@@ -669,7 +668,6 @@ if ($conn->query($sql) !== TRUE) {
     </div>
 
     <script>
-        // Criar partículas de fundo
         document.addEventListener('DOMContentLoaded', function() {
             const particlesContainer = document.getElementById('particles');
             const particleCount = 15;
@@ -678,24 +676,20 @@ if ($conn->query($sql) !== TRUE) {
                 const particle = document.createElement('div');
                 particle.classList.add('particle');
                 
-                // Tamanho aleatório
+     
                 const size = Math.random() * 50 + 20;
                 particle.style.width = `${size}px`;
                 particle.style.height = `${size}px`;
                 
-                // Posição aleatória
                 particle.style.top = `${Math.random() * 100}%`;
                 particle.style.left = `${Math.random() * 100}%`;
                 
-                // Atraso na animação
                 particle.style.animationDelay = `${Math.random() * 5}s`;
                 
                 particlesContainer.appendChild(particle);
             }
         });
 
-        // Verificar se o usuário está logado (via session PHP)
-        // Se não estiver logado, redireciona para index.php
         fetch('check_auth.php')
             .then(response => response.json())
             .then(data => {
@@ -706,17 +700,13 @@ if ($conn->query($sql) !== TRUE) {
 
         let editandoId = null;
 
-        // Elementos do DOM
         const form = document.getElementById('funcionarioForm');
         const tabelaBody = document.getElementById('tabelaBody');
         const formTitle = document.getElementById('formTitle');
         const submitBtn = document.getElementById('submitBtn');
         const cancelBtn = document.getElementById('cancelBtn');
 
-        // Inicializar a tabela
         atualizarTabela();
-
-        // Adicionar efeitos de foco nos inputs
         document.querySelectorAll('input, select').forEach(input => {
             input.addEventListener('focus', function() {
                 this.parentElement.classList.add('input-focus');
@@ -731,7 +721,6 @@ if ($conn->query($sql) !== TRUE) {
             });
         });
 
-        // Evento de submit do formulário
         form.addEventListener('submit', function(e) {
             e.preventDefault();
             
@@ -744,7 +733,6 @@ if ($conn->query($sql) !== TRUE) {
             const salario = document.getElementById('salario').value;
             const dataAdmissao = document.getElementById('dataAdmissao').value;
             
-            // Enviar dados para o servidor via AJAX
             const formData = new FormData();
             formData.append('nome', nome);
             formData.append('cpf', cpf);
@@ -773,13 +761,11 @@ if ($conn->query($sql) !== TRUE) {
             .then(data => {
                 console.log('Dados processados:', data);
                 if (data.success) {
-                    // Animação de sucesso
                     const submitButton = document.getElementById('submitBtn');
                     submitButton.classList.add('success-animation');
                     
                     setTimeout(() => {
                         submitButton.classList.remove('success-animation');
-                        // Atualizar a tabela e resetar o formulário
                         atualizarTabela();
                         form.reset();
                         cancelEdit();
@@ -796,7 +782,6 @@ if ($conn->query($sql) !== TRUE) {
         });
 
         function editarFuncionario(id) {
-            // Buscar dados do funcionário pelo ID
             fetch(`funcionarios_action.php?action=get&id=${id}`)
                 .then(response => response.json())
                 .then(data => {
@@ -805,7 +790,6 @@ if ($conn->query($sql) !== TRUE) {
                         return;
                     }
                     const funcionario = data.data;
-                    // Preencher o formulário com os dados do funcionário
                     document.getElementById('nome').value = funcionario.nome;
                     document.getElementById('cpf').value = funcionario.cpf;
                     document.getElementById('email').value = funcionario.email;
@@ -814,15 +798,13 @@ if ($conn->query($sql) !== TRUE) {
                     document.getElementById('departamento').value = funcionario.departamento || '';
                     document.getElementById('salario').value = funcionario.salario;
                     document.getElementById('dataAdmissao').value = funcionario.dataAdmissao;
-                    
-                    // Atualizar o estado do formulário
+        
                     formTitle.textContent = 'Editar Funcionário';
                     document.querySelector('#submitBtn .btn-text').textContent = 'Atualizar';
                     document.querySelector('#submitBtn i').className = 'fas fa-sync-alt';
                     cancelBtn.style.display = 'inline-flex';
                     editandoId = id;
                     
-                    // Scroll suave até o formulário
                     document.querySelector('.card').scrollIntoView({ behavior: 'smooth' });
                 })
                 .catch(error => {
@@ -885,13 +867,12 @@ if ($conn->query($sql) !== TRUE) {
         }
 
         function atualizarTabela() {
-            // Buscar dados do servidor
+
             fetch('funcionarios_action.php?action=list')
                 .then(response => response.json())
                 .then(data => {
                     tabelaBody.innerHTML = '';
                     
-                    // Verificar se a resposta foi bem-sucedida
                     if (!data.success) {
                         const tr = document.createElement('tr');
                         tr.innerHTML = `<td colspan="7" class="no-data">Erro: ${data.message || 'Erro desconhecido'}</td>`;
@@ -899,7 +880,6 @@ if ($conn->query($sql) !== TRUE) {
                         return;
                     }
                     
-                    // Verificar se há dados
                     if (!data.data || data.data.length === 0) {
                         const tr = document.createElement('tr');
                         tr.innerHTML = '<td colspan="7" class="no-data">Nenhum funcionário cadastrado</td>';
@@ -927,7 +907,6 @@ if ($conn->query($sql) !== TRUE) {
                         `;
                         tabelaBody.appendChild(row);
                         
-                        // Adicionar animação de entrada
                         setTimeout(() => {
                             row.style.opacity = '1';
                             row.style.transform = 'translateY(0)';
@@ -941,14 +920,12 @@ if ($conn->query($sql) !== TRUE) {
         }
 
         function logout() {
-            // Fazer logout via PHP
             fetch('logout.php')
                 .then(() => {
                     window.location.href = 'index.php';
                 });
         }
 
-        // Formatar CPF
         document.getElementById('cpf').addEventListener('input', function(e) {
             let value = e.target.value.replace(/\D/g, '');
             if (value.length <= 11) {
@@ -959,7 +936,6 @@ if ($conn->query($sql) !== TRUE) {
             }
         });
 
-        // Formatar telefone
         document.getElementById('telefone').addEventListener('input', function(e) {
             let value = e.target.value.replace(/\D/g, '');
             if (value.length <= 11) {
@@ -977,3 +953,4 @@ if ($conn->query($sql) !== TRUE) {
 </body>
 
 </html>
+
