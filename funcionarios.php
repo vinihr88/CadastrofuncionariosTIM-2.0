@@ -32,7 +32,7 @@ if ($conn->query($sql) !== TRUE) {
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-1<style>
+<style>
         :root {
             --primary-color: #0066cc;
             --primary-light: #3a89e9;
@@ -473,7 +473,6 @@ if ($conn->query($sql) !== TRUE) {
             }
         }
     </style>
-    /* Modal de confirmação de exclusão */
     <style>
         .modal-overlay {
             position: fixed;
@@ -976,4 +975,5 @@ if ($conn->query($sql) !== TRUE) {
         });
     </script>
 </body>
+
 </html>
